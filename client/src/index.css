@@ -1,0 +1,149 @@
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* === Maersk-ish palette ===
+   Teal/Turquoise:  #0099A8
+   Teal Hover:      #007E8B
+   Navy (details):  #0B2242
+   Gray canvas:     #F4F6F8
+   Borders:         #E3E6EA
+   Danger:          #E14C4C
+*/
+:root {
+  --bg: #F4F6F8;
+  --card: #ffffff;
+  --border: #E3E6EA;
+  --text: #0B2242;
+  --subtle: #6B7280;
+
+  --accent: #0099A8;
+  --accent-hover: #007E8B;
+
+  --danger: #E14C4C;
+  --danger-hover: #C03434;
+
+  --badge-ok-bg: #E5FAF6;     /* teal-50 */
+  --badge-ok-fg: #0E766E;     /* teal-700 */
+  --badge-warn-bg: #FFF7E5;   /* amber-50 */
+  --badge-warn-fg: #92400E;   /* amber-800 */
+  --badge-mute-bg: #EEF1F4;   /* gray-100 */
+  --badge-mute-fg: #4B5563;   /* gray-600 */
+
+  --brand-grad-a: #0099A8;
+  --brand-grad-b: #5EC8D1;
+}
+
+body {
+  @apply bg-[var(--bg)] text-[var(--text)] antialiased;
+}
+
+/* Containers */
+.container-ux { @apply max-w-7xl mx-auto px-4; }
+.section     { @apply card card-pad space-y-4; }
+
+/* Cards */
+.card {
+  @apply bg-[var(--card)] border border-[var(--border)] rounded-2xl shadow-sm;
+  transition: box-shadow .2s ease, transform .2s ease;
+}
+.card:hover { @apply shadow-md; }
+.card-pad   { @apply p-4 md:p-6; }
+
+/* Headings */
+.h1 { @apply text-2xl font-semibold tracking-tight; }
+.h2 { @apply text-xl font-semibold tracking-tight; }
+
+/* Buttons */
+.btn {
+  @apply inline-flex items-center justify-center gap-2 text-sm font-medium rounded-xl px-3 py-2 border transition-colors;
+}
+.btn-solid {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.btn-solid:hover { background-color: var(--accent-hover); }
+
+.btn-ghost {
+  @apply border border-[var(--border)] bg-white text-[var(--text)];
+}
+.btn-ghost:hover { background-color: #F0F5F6; }
+
+.btn-danger {
+  background-color: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+}
+.btn-danger:hover { background-color: var(--danger-hover); }
+
+/* Inputs & Selects */
+.input, .select {
+  @apply w-full border border-[var(--border)] rounded-lg px-3 py-2 text-sm bg-white outline-none focus:ring-2;
+  box-shadow: 0 1px 0 rgba(11,34,66,0.02) inset;
+}
+.input:focus, .select:focus { box-shadow: none; }
+.input:focus, .select:focus { @apply focus:ring-[var(--accent)]; }
+.input:disabled { @apply bg-gray-100 text-gray-500; }
+.label { @apply text-sm font-medium text-[var(--subtle)]; }
+.field { @apply flex flex-col gap-1; }
+
+/* Badges */
+.badge { @apply text-xs font-medium px-2 py-1 rounded-full; }
+.badge-ok   { background: var(--badge-ok-bg);   color: var(--badge-ok-fg); }
+.badge-warn { background: var(--badge-warn-bg); color: var(--badge-warn-fg); }
+.badge-mute { background: var(--badge-mute-bg); color: var(--badge-mute-fg); }
+
+/* Tables */
+.tbl { @apply w-full text-sm border-collapse; }
+.th  { @apply text-left font-semibold border-b border-[var(--border)] py-2 text-[var(--subtle)]; }
+.td  { @apply border-b border-[var(--border)] py-2 align-middle; }
+
+/* Toast */
+.toast {
+  @apply fixed bottom-4 right-4 text-white px-4 py-2 rounded-lg shadow-lg text-sm;
+  background: linear-gradient(135deg, var(--accent), var(--brand-grad-b));
+  animation: toast-in .25s ease;
+}
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(8px) }
+  to   { opacity: 1; transform: translateY(0) }
+}
+
+/* Brand mark */
+.brand-square {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: linear-gradient(135deg, var(--brand-grad-a), var(--brand-grad-b));
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.5);
+}
+
+/* Header glass */
+.header {
+  @apply sticky top-0 z-10 border-b backdrop-blur;
+  background: linear-gradient(90deg, rgba(0,153,168,.08), rgba(94,200,209,.06));
+}
+
+/* Dark mode */
+body.theme--dark {
+  --bg: #0B1528;
+  --card: #0F1E33;
+  --border: #1E2E45;
+  --text: #E6EDF5;
+  --subtle: #9FB2C8;
+
+  --accent: #19B7C6;
+  --accent-hover: #1193A0;
+
+  --danger: #FF6B6B;
+  --danger-hover: #E25555;
+
+  --badge-ok-bg: #0B3B3B;
+  --badge-ok-fg: #8EF0E3;
+  --badge-warn-bg: #3A2A0A;
+  --badge-warn-fg: #FFD488;
+  --badge-mute-bg: #16263A;
+  --badge-mute-fg: #9FB2C8;
+
+  --brand-grad-a: #19B7C6;
+  --brand-grad-b: #78E5EE;
+}
