@@ -13,6 +13,6 @@ const config = process.env.DATABASE_URL ? {
   database: process.env.PGDATABASE || 'postgres',
   ssl: { rejectUnauthorized: false } // Required for Supabase
 };
-console.log('PG CONFIG ->', config);
+
 export const pool = new Pool(config);
 pool.on('error', (err)=>console.error('Unexpected PG error', err));

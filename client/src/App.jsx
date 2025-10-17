@@ -1783,7 +1783,7 @@ function AdminExportadores({ fetcher }) {
           <Input className="ml-auto w-64" placeholder="Buscar por id/nombre" value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => e.key === "Enter" && load()} />
           <Button 
             onClick={load}
-            className="bg-blue-200 text-blue-500 border-blue-200 hover:bg-blue-150 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-700 dark:hover:bg-blue-800"
+            className="bg-blue-100 text-blue-500 border-blue-200 hover:bg-blue-150 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-700 dark:hover:bg-blue-800"
           >
             Buscar
           </Button>
