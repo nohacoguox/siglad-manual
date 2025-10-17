@@ -1,0 +1,224 @@
+{
+  "info": {
+    "name": "SIGLAD API - Declaraciones",
+    "description": "Colección para probar la API de SIGLAD",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:4001"
+    },
+    {
+      "key": "auth_token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"trans@siglad.local\",\n  \"password\": \"Trans123$\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Login para obtener token de autenticación"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('auth_token', response.token);",
+                  "    console.log('Token guardado:', response.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Declaraciones",
+      "item": [
+        {
+          "name": "Crear Declaración - IDs ACTIVOS",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"duca\": {\n    \"numeroDocumento\": \"20241016001\",\n    \"fechaEmision\": \"2025-10-16\",\n    \"paisEmisor\": \"GT\",\n    \"tipoOperacion\": \"IMPORTACION\",\n    \"exportador\": {\n      \"idExportador\": \"2\",\n      \"nombreExportador\": \"EXPORTADOR2\"\n    },\n    \"importador\": {\n      \"idImportador\": \"2\",\n      \"nombreImportador\": \"Rigoberta SA\"\n    },\n    \"transporte\": {\n      \"medioTransporte\": \"TERRESTRE\",\n      \"placaVehiculo\": \"ABC123\",\n      \"conductor\": {\n        \"nombreConductor\": \"Juan Pérez\",\n        \"licenciaConductor\": \"123456789\",\n        \"paisLicencia\": \"GT\"\n      },\n      \"ruta\": {\n        \"aduanaSalida\": \"PUERTO BARRIOS\",\n        \"aduanaEntrada\": \"SAN CRISTÓBAL\",\n        \"paisDestino\": \"SV\",\n        \"kilometrosAproximados\": \"250\"\n      }\n    },\n    \"mercancias\": {\n      \"numeroItems\": 1,\n      \"items\": [\n        {\n          \"linea\": 1,\n          \"descripcion\": \"Productos electrónicos\",\n          \"cantidad\": 10,\n          \"unidadMedida\": \"PZA\",\n          \"valorUnitario\": 500,\n          \"paisOrigen\": \"GT\"\n        }\n      ]\n    },\n    \"valores\": {\n      \"valorFactura\": 5000,\n      \"gastosTransporte\": 200,\n      \"seguro\": 50,\n      \"otrosGastos\": 100,\n      \"valorAduanaTotal\": 5350,\n      \"moneda\": \"USD\"\n    },\n    \"resultadoSelectivo\": {\n      \"codigo\": \"\",\n      \"descripcion\": \"\"\n    },\n    \"estadoDocumento\": \"CONFIRMADO\",\n    \"firmaElectronica\": \"\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/declarations",
+              "host": ["{{base_url}}"],
+              "path": ["declarations"]
+            },
+            "description": "Crear declaración con IDs ACTIVOS - Exportador ID '2' e Importador ID '2'"
+          }
+        },
+        {
+          "name": "Crear Declaración - Set 2 ACTIVOS",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"duca\": {\n    \"numeroDocumento\": \"20241016002\",\n    \"fechaEmision\": \"2025-10-16\",\n    \"paisEmisor\": \"GT\",\n    \"tipoOperacion\": \"EXPORTACION\",\n    \"exportador\": {\n      \"idExportador\": \"3\",\n      \"nombreExportador\": \"EXPORTADOR3\"\n    },\n    \"importador\": {\n      \"idImportador\": \"3\",\n      \"nombreImportador\": \"SANDRA\"\n    },\n    \"transporte\": {\n      \"medioTransporte\": \"TERRESTRE\",\n      \"placaVehiculo\": \"XYZ789\",\n      \"conductor\": {\n        \"nombreConductor\": \"María López\",\n        \"licenciaConductor\": \"987654321\",\n        \"paisLicencia\": \"GT\"\n      },\n      \"ruta\": {\n        \"aduanaSalida\": \"TECÚN UMÁN\",\n        \"aduanaEntrada\": \"CIUDAD PEDRO DE ALVARADO\",\n        \"paisDestino\": \"MX\",\n        \"kilometrosAproximados\": \"180\"\n      }\n    },\n    \"mercancias\": {\n      \"numeroItems\": 1,\n      \"items\": [\n        {\n          \"linea\": 1,\n          \"descripcion\": \"Textiles y confección\",\n          \"cantidad\": 25,\n          \"unidadMedida\": \"KG\",\n          \"valorUnitario\": 100,\n          \"paisOrigen\": \"GT\"\n        }\n      ]\n    },\n    \"valores\": {\n      \"valorFactura\": 2500,\n      \"gastosTransporte\": 150,\n      \"seguro\": 25,\n      \"otrosGastos\": 75,\n      \"valorAduanaTotal\": 2750,\n      \"moneda\": \"USD\"\n    },\n    \"resultadoSelectivo\": {\n      \"codigo\": \"\",\n      \"descripcion\": \"\"\n    },\n    \"estadoDocumento\": \"CONFIRMADO\",\n    \"firmaElectronica\": \"\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/declarations",
+              "host": ["{{base_url}}"],
+              "path": ["declarations"]
+            },
+            "description": "Crear declaración con IDs ACTIVOS - Exportador ID '3' e Importador ID '3'"
+          }
+        },
+        {
+          "name": "Crear Declaración - Set Mínimo ACTIVOS",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"duca\": {\n    \"numeroDocumento\": \"20241016003\",\n    \"fechaEmision\": \"2025-10-16\",\n    \"paisEmisor\": \"GT\",\n    \"tipoOperacion\": \"IMPORTACION\",\n    \"exportador\": {\n      \"idExportador\": \"2\",\n      \"nombreExportador\": \"EXPORTADOR2\"\n    },\n    \"importador\": {\n      \"idImportador\": \"2\",\n      \"nombreImportador\": \"Rigoberta SA\"\n    },\n    \"transporte\": {\n      \"medioTransporte\": \"TERRESTRE\",\n      \"placaVehiculo\": \"123ABC\",\n      \"ruta\": {\n        \"aduanaSalida\": \"PUERTO\",\n        \"aduanaEntrada\": \"PUERTO\",\n        \"paisDestino\": \"SV\"\n      }\n    },\n    \"mercancias\": {\n      \"numeroItems\": 1,\n      \"items\": [\n        {\n          \"linea\": 1,\n          \"descripcion\": \"Producto de prueba\",\n          \"cantidad\": 1,\n          \"unidadMedida\": \"PZA\",\n          \"valorUnitario\": 1000,\n          \"paisOrigen\": \"GT\"\n        }\n      ]\n    },\n    \"valores\": {\n      \"valorAduanaTotal\": 1000,\n      \"moneda\": \"USD\"\n    },\n    \"estadoDocumento\": \"CONFIRMADO\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/declarations",
+              "host": ["{{base_url}}"],
+              "path": ["declarations"]
+            },
+            "description": "Crear declaración con datos mínimos requeridos - IDs ACTIVOS"
+          }
+        },
+        {
+          "name": "Listar Mis Declaraciones",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/status/mine",
+              "host": ["{{base_url}}"],
+              "path": ["status", "mine"]
+            },
+            "description": "Obtener lista de declaraciones del usuario actual"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Catálogos",
+      "item": [
+        {
+          "name": "Obtener Importadores",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/catalogs/importers?status=ACTIVO",
+              "host": ["{{base_url}}"],
+              "path": ["catalogs", "importers"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "ACTIVO"
+                }
+              ]
+            },
+            "description": "Obtener lista de importadores activos"
+          }
+        },
+        {
+          "name": "Obtener Exportadores",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/catalogs/exporters?status=ACTIVO",
+              "host": ["{{base_url}}"],
+              "path": ["catalogs", "exporters"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "ACTIVO"
+                }
+              ]
+            },
+            "description": "Obtener lista de exportadores activos"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -13,7 +13,10 @@ import exporterRoutes from "./routes/exporters.js";
 import catalogRoutes from "./routes/catalogs.js";
 
 const app = express();
-app.use(cors({ origin: process.env.CORS_ORIGIN?.split(',') || '*', credentials: true }));
+app.use(cors({ 
+  origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:5173', 'http://localhost:3000'], 
+  credentials: true 
+}));
 app.use(express.json({ limit: '1mb' }));
 app.use(morgan('dev'));
 

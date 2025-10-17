@@ -3,7 +3,7 @@ export async function logAudit({ userId=null, action, entity, entityId=null, ope
   try {
     const ipClient = req?.headers['x-forwarded-for']?.split(',')[0] || req?.socket?.remoteAddress || null;
     await pool.query(
-      `INSERT INTO audit_logs (user_id, action, entity, entity_id, operation, result, ip_client, num_declaracion, details)
+      `INSERT INTO audit_logs (user_id, action, entity, entity_id, operation, result, ip, num_declaracion, details)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
       [userId, action, entity, entityId, operation, result, ipClient, numDeclaracion, details]
     );

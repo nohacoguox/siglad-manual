@@ -123,12 +123,23 @@ function validateItems(duca) {
 
 async function assertImporterActive(client, duca) {
   const id = duca.importador.idImportador;
+  console.log('🔍 Verificando importador:', id);
   const { rows } = await client.query("SELECT estado FROM importers WHERE id=$1", [id]);
-  if (!rows[0] || rows[0].estado !== "ACTIVO") {
-    const err = new Error("Importador no existe o está INACTIVO");
+  console.log('🔍 Resultado consulta importador:', rows);
+  
+  if (!rows[0]) {
+    const err = new Error(`Importador con ID '${id}' no existe en el catálogo`);
     err._fa01 = true;
     throw err;
   }
+  
+  if (rows[0].estado !== "ACTIVO") {
+    const err = new Error(`Importador '${id}' está INACTIVO (estado: ${rows[0].estado})`);
+    err._fa01 = true;
+    throw err;
+  }
+  
+  console.log('✅ Importador verificado como ACTIVO:', id);
 }
 
 async function assertUniqueDuca(client, numero) {
@@ -156,8 +167,13 @@ router.post("/", requireAuth, requireRole("TRANSPORTISTA"), async (req, res) => 
 
     const client = await pool.connect();
     try {
+      console.log('🔄 Iniciando transacción para DUCA:', duca.numeroDocumento);
       await client.query("BEGIN");
+      
+      console.log('🔍 Verificando unicidad de DUCA:', duca.numeroDocumento);
       await assertUniqueDuca(client, duca.numeroDocumento);
+      
+      console.log('🔍 Verificando importador activo:', duca.importador?.idImportador);
       await assertImporterActive(client, duca);
 
       const ins = await client.query(
@@ -198,8 +214,11 @@ router.post("/", requireAuth, requireRole("TRANSPORTISTA"), async (req, res) => 
       );
 
       const decId = ins.rows[0].id;
+      console.log('✅ Declaración creada con ID:', decId);
 
+      console.log('📦 Insertando items de mercancías:', duca.mercancias.items.length);
       for (const it of duca.mercancias.items) {
+        console.log('📦 Insertando item línea:', it.linea);
         await client.query(
           `INSERT INTO declaration_items (declaration_id, linea, descripcion, cantidad, unidad_medida, valor_unitario, pais_origen)
            VALUES ($1,$2,$3,$4,$5,$6,$7)`,
@@ -207,6 +226,7 @@ router.post("/", requireAuth, requireRole("TRANSPORTISTA"), async (req, res) => 
         );
       }
 
+      console.log('✅ Confirmando transacción');
       await client.query("COMMIT");
       await logAudit({
         userId: req.user.sub,
@@ -226,12 +246,45 @@ router.post("/", requireAuth, requireRole("TRANSPORTISTA"), async (req, res) => 
       client.release();
     }
   } catch (err) {
-    if (err._fa01 || /Verifique los campos obligatorios/i.test(err.message)) {
+    console.error('❌ ERROR EN REGISTRO DUCA:', {
+      message: err.message,
+      stack: err.stack,
+      code: err.code,
+      constraint: err.constraint,
+      detail: err.detail,
+      hint: err.hint,
+      duca: duca?.numeroDocumento || 'N/A'
+    });
+    
+    if (err._fa01 || /Verifique los campos obligatorios/i.test(err.message) || /excede el tamaño máximo/i.test(err.message)) {
       await logAudit({ userId: req.user?.sub, action: "CREATE", entity: "DECLARATION", result: "FALLO", operation: "Registro declaración", req, details: err.message, num_declaracion: duca?.numeroDocumento || null });
       return res.status(400).json({ error: "Verifique los campos obligatorios", detail: err.message });
     }
-    await logAudit({ userId: req.user?.sub, action: "CREATE", entity: "DECLARATION", result: "FALLO", operation: "Registro declaración", req, details: "Error interno/DB", num_declaracion: duca?.numeroDocumento || null });
-    return res.status(500).json({ error: "Error de conexión (FA02). Intente nuevamente." });
+    
+    // Log detallado del error para debugging
+    const errorDetails = {
+      message: err.message,
+      code: err.code,
+      constraint: err.constraint,
+      detail: err.detail,
+      hint: err.hint
+    };
+    
+    await logAudit({ 
+      userId: req.user?.sub, 
+      action: "CREATE", 
+      entity: "DECLARATION", 
+      result: "FALLO", 
+      operation: "Registro declaración", 
+      req, 
+      details: JSON.stringify(errorDetails), 
+      num_declaracion: duca?.numeroDocumento || null 
+    });
+    
+    return res.status(500).json({ 
+      error: "Error de conexión (FA02). Intente nuevamente.", 
+      debug: process.env.NODE_ENV === 'development' ? errorDetails : undefined
+    });
   }
 });
 
