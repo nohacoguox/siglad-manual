@@ -1,5 +1,5 @@
 import { pool } from '../db.js';
-export async function logAudit({ userId=null, action, entity, entityId=null, operation=null, result=null, numDeclaracion=null, req=null, details=null }) {
+export async function logAudit({ userId=null, action, entity, entityId=null, operation="Operación del sistema", result=null, numDeclaracion=null, req=null, details=null }) {
   try {
     const ipClient = req?.headers['x-forwarded-for']?.split(',')[0] || req?.socket?.remoteAddress || null;
     await pool.query(
