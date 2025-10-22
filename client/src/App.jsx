@@ -475,6 +475,12 @@ function Transportista() {
   const MEDIOS = ["TERRESTRE", "MARITIMO", "AEREO"];
   const PAISES_2 = ["GT", "SV", "HN", "NI", "CR", "PA", "MX", "US", "CA", "CO", "PE", "BR", "AR", "CL", "EC", "VE", "PY", "UY", "BO"];
   const MONEDAS = ["USD", "GTQ", "EUR", "MXN", "CRC", "HNL", "NIO", "PAB", "COP", "PEN", "BRL", "ARS", "CLP", "UYU", "BOB"];
+  const UNIDADES_MEDIDA = [
+    "KG", "LBS", "TON", 
+    "L", "ML", "GAL",
+    "M", "CM", "M2", "M3",
+    "PZA", "UNI", "PAR"
+  ];
   const [imps, setImps] = useState([]);
   const [qImp, setQImp] = useState("");
   const [exps, setExps] = useState([]);
@@ -581,6 +587,14 @@ function Transportista() {
     const hasValidItems = items.some(item => item.descripcion.trim() && item.cantidad && item.valorUnitario);
     if (!hasValidItems) {
       showWarning("Mercancías requeridas", "Debe agregar al menos una mercancía con descripción, cantidad y valor");
+      setSubmitting(false);
+      return;
+    }
+    
+    // Validar que todas las mercancías tengan unidad de medida
+    const hasValidUnits = items.every(item => item.unidadMedida.trim());
+    if (!hasValidUnits) {
+      showWarning("Unidad requerida", "Todas las mercancías deben tener una unidad de medida seleccionada");
       setSubmitting(false);
       return;
     }
@@ -1056,13 +1070,18 @@ function Transportista() {
                   </div>
                   
                   <div className="field">
-                    <label className="label text-xs">Unidad</label>
-                    <Input 
-                      placeholder="KG, LBS, etc." 
+                    <label className="label text-xs">Unidad *</label>
+                    <Select 
                       value={it.unidadMedida} 
-                      onChange={(e) => updItem(i, { unidadMedida: e.target.value.slice(0, 10).toUpperCase() })}
-                      maxLength={10}
-                    />
+                      onChange={(e) => updItem(i, { unidadMedida: e.target.value })}
+                      className="unidad-select"
+                      required
+                    >
+                      <option value="" disabled>Seleccione unidad</option>
+                      {UNIDADES_MEDIDA.map((unidad) => (
+                        <option key={unidad} value={unidad}>{unidad}</option>
+                      ))}
+                    </Select>
                   </div>
                   
                   <div className="field">

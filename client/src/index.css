@@ -1130,3 +1130,52 @@ body.theme--light .text-\[var\(--text\)\].font-medium {
   color: #1E40AF !important;
   font-weight: 600 !important;
 }
+
+/* Dropdown height limitation for unidad select */
+.unidad-select {
+  max-height: 200px !important;
+}
+
+.unidad-select option {
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+/* Limit dropdown to show 5 options with scroll */
+select.unidad-select {
+  overflow-y: auto;
+}
+
+/* Custom scrollbar for unidad select dropdown */
+.unidad-select::-webkit-scrollbar {
+  width: 8px;
+}
+
+.unidad-select::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.unidad-select::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.unidad-select::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Dark mode scrollbar for unidad select */
+body.theme--dark .unidad-select::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+body.theme--dark .unidad-select::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+body.theme--dark .unidad-select::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Unidad select maintains normal styling */
