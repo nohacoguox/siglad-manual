@@ -1,18 +1,23 @@
+// server/src/db.js
 import 'dotenv/config';
 import pkg from 'pg';
 const { Pool } = pkg;
 
-const config = process.env.DATABASE_URL ? { 
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false } // Required for Supabase
-} : {
-  user: process.env.PGUSER || 'postgres',
-  password: process.env.PGPASSWORD,
-  host: process.env.PGHOST || 'db.snrcvzdztdnlcgolxkop.supabase.co',
-  port: Number(process.env.PGPORT || 5432),
-  database: process.env.PGDATABASE || 'postgres',
-  ssl: { rejectUnauthorized: false } // Required for Supabase
-};
+const { DATABASE_URL, PGPOOL_MAX } = process.env;
+if (!DATABASE_URL) {
+  throw new Error('DATABASE_URL env var is required');
+}
 
-export const pool = new Pool(config);
-pool.on('error', (err)=>console.error('Unexpected PG error', err));
+export const pool = new Pool({
+  connectionString: DATABASE_URL,
+  max: Number(PGPOOL_MAX || 5),
+  idleTimeoutMillis: 30_000,
+  // Supabase en Render requiere SSL pero sin verificar CA pública
+  ssl: { rejectUnauthorized: false },
+});
+
+pool.on('error', (err) => {
+  console.error('[pg] Unexpected error on idle client', err);
+});
+
+export const query = (text, params) => pool.query(text, params);
