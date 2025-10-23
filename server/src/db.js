@@ -10,4 +10,8 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
-export default pool;
+pool.on('error', (err) => {
+  console.error('Unexpected PG error', err);
+});
+
+export { pool }; // 👈 Exportación nombrada
